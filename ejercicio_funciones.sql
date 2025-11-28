@@ -157,14 +157,30 @@ Retorna el costo.
 delimiter $$
 
 create function calcular_costo_envio(p_id_producto int)
-returns int
+returns varchar(50)
 deterministic
 begin
 
 declare v_peso int;
-declare v_costo int;
+declare v_costo varchar(50);
 
-select peso into producto where id = p_id_producto;
+select peso into v_peso from  producto where id = p_id_producto;
+
+if v_peso < 2 then 
+    set v_costo = 'Envio 5.000';
+elseif v_peso between 2 and 5 then 
+    set v_costo = 'Envio 10.000';
+else 
+set v_costo = 'Envio 18.000';
+
+end if;
+    return v_costo;
+end$$
+
+delimiter ;
+
+select id,peso, calcular_costo_envio(id) as calcular_envio from producto;
+
 
 --------------------------------------------------------------------------------------------------------------------------
 6. Función que devuelva un mensaje sobre el estado del producto
@@ -174,6 +190,34 @@ Obtiene stock_actual.
 Si stock = 0 → “Agotado”
 Si entre 1 y 5 → “Últimas unidades”
 Si > 5 → “Disponible”.
+
+
+delimiter $$
+create function estado_producto (p_id_producto int)
+returns varchar(50)
+deterministic
+begin
+
+declare v_stock_actual int;
+declare v_estado varchar(50);
+
+select stock into v_stock_actual from producto where id = p_id_producto;
+
+if v_stock_actual = 0 then 
+set v_estado = 'Agotado';
+
+elseif v_stock_actual between 1 and 5 then 
+set v_estado = 'Ultimas Unidades';
+
+else 
+set v_estado = 'Disponible';
+end if;
+return v_estado;
+end$$
+
+delimiter ;
+
+select nombre, stock, estado_producto(2) as estado_stock from producto;
 --------------------------------------------------------------------------------------------------------------------------
 7. Función que calcule un bono por antigüedad
 
@@ -183,6 +227,9 @@ Si ≥ 10 → bono = 800.000
 Si entre 5 y 9 → 400.000
 Si menos → 100.000
 Retorna el valor.
+
+
+
 --------------------------------------------------------------------------------------------------------------------------
 8. Función que retorne el valor del impuesto de un producto según categoría
 
