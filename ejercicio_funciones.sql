@@ -221,15 +221,47 @@ select nombre, stock, estado_producto(2) as estado_stock from producto;
 --------------------------------------------------------------------------------------------------------------------------
 7. Función que calcule un bono por antigüedad
 
-Recibe id_empleado.
+Recibe id_usuario.
 Obtiene anhos_servicio (int).
 Si ≥ 10 → bono = 800.000
 Si entre 5 y 9 → 400.000
 Si menos → 100.000
 Retorna el valor.
+--creacion de tabla alterna
+alter table usuario add column anhos_antiguedad int not null;
 
+--update de datos
+update usuario set anhos_antiguedad = 15 where id = 1;
+update usuario set anhos_antiguedad = 5 where id = 4;
+update usuario set anhos_antiguedad = 7 where id = 5;
 
+delimiter $$
+create function bono_antiguedad(p_id_usuario int)
+returns int
+deterministic
+begin 
 
+declare v_anhos_servicio int;
+declare v_bono int;
+
+select anhos_antiguedad into v_anhos_servicio from usuario where id = p_id_usuario;
+
+if v_anhos_servicio >= 10 then 
+set v_bono = '800000';
+elseif v_anhos_servicio between 5 and 9 then
+set v_bono = '400000';
+else 
+set v_bono = '100000';
+
+end if;
+return v_bono;
+end $$
+
+delimiter ;
+
+select usuario, anhos_antiguedad , bono_antiguedad(id) as bono_ganado from usuario;
+
+select bono_antiguedad(4) as bono_ganado;
 --------------------------------------------------------------------------------------------------------------------------
 8. Función que retorne el valor del impuesto de un producto según categoría
 
@@ -239,6 +271,11 @@ Si categoría = ‘lácteo’ → impuesto 5%
 Si ‘tecnología’ → 15%
 Otros → 8%
 Retorna el impuesto calculado.
+
+
+
+
+
 --------------------------------------------------------------------------------------------------------------------------
 9. Función que calcule la mora por pago atrasado
 
