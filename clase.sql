@@ -67,3 +67,5 @@ select c.id,p.nombre from cliente c inner join persona p on c.id=p.id
 where p.cliente = v_nombreCliente;
 
 end //
+
+--estudiar eventos
