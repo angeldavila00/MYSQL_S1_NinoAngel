@@ -6,7 +6,8 @@ Dada un id_detalle, obtenga precio_unitario y cantidad, calcule el subtotal, agr
 delimiter $$
 create function ejercicio (p_id_detalle int)
 returns double
-deterministic
+NOT DETERMINISTIC
+READS SQL DATA
 begin
 declare v_subtotal double;
 declare v_cantidad int;
@@ -44,7 +45,8 @@ Si es < 20 → retorna 1 (bajo).
 delimiter $$
 create function stock_producto(p_id_producto int)
 returns int
-deterministic
+NOT DETERMINISTIC
+READS SQL DATA
 begin
 
 declare v_stock_actual int;
@@ -85,7 +87,8 @@ delimiter $$
 
 create function calcular_comision(p_id_venta int, p_id_vendedor int)
 returns double
-deterministic
+NOT DETERMINISTIC
+READS SQL DATA
 begin
 
 declare v_total double;
@@ -120,7 +123,8 @@ Si menos → 'Ocasional'.
 delimiter $$
 create function tipo_cliente(p_cliente_id int)
 returns varchar(50)
-deterministic
+NOT DETERMINISTIC
+READS SQL DATA
 begin
 declare v_cant_venta int;
 declare v_tipo varchar(50);
@@ -158,7 +162,8 @@ delimiter $$
 
 create function calcular_costo_envio(p_id_producto int)
 returns varchar(50)
-deterministic
+NOT DETERMINISTIC
+READS SQL DATA
 begin
 
 declare v_peso int;
@@ -195,7 +200,8 @@ Si > 5 → “Disponible”.
 delimiter $$
 create function estado_producto (p_id_producto int)
 returns varchar(50)
-deterministic
+NOT DETERMINISTIC
+READS SQL DATA
 begin
 
 declare v_stock_actual int;
@@ -238,7 +244,8 @@ update usuario set anhos_antiguedad = 7 where id = 5;
 delimiter $$
 create function bono_antiguedad(p_id_usuario int)
 returns int
-deterministic
+NOT DETERMINISTIC
+READS SQL DATA
 begin 
 
 declare v_anhos_servicio int;

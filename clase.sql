@@ -69,3 +69,64 @@ where p.cliente = v_nombreCliente;
 end //
 
 --estudiar eventos
+
+delimiter $$
+create event auditoria_tabla_detalle
+on schedule every 2 month starts now()+ interval 10 second
+do
+begin   
+    drop table if exists auditoria; 
+    create table auditoria(id int, tipo_venta varchar(50), codigo int, cantidad int, subtotal double, venta_id int, primary key(id));
+    insert into auditoria select * from detalle_venta;
+end $$
+delimiter ;
+
+-- estado de citas
+
+delimiter $$
+create event estado_citas
+on schedule at now() + interval 10 second
+do 
+begin    
+    update citas set estado = 'inactivo' where fecha_inicio<now() - interval 2 week;
+end$$
+
+delimiter ;
+
+delimiter $$
+create event actualizar_pestado_producto
+on schedule every 1 day starts now() + interval 10 second
+do
+begin
+    update producto
+    set estado = 'agotado'
+    where stock <= alert;
+
+end$$
+delimiter ;
+
+
+----------------
+delimiter $$
+create function nombre_persona(p_persona int)
+returns varchar(50)
+NOT DETERMINISTIC
+READS SQL DATA
+begin
+return (select concat (nombre,'', apellido) from persona where id=p_persona);
+end$$
+delimiter ;
+
+---------------------------
+--nombre
+delimiter $$
+create procedure nombre(in v_id_venta int)
+begin
+
+select 
+conc(p.nombre, ' ',p.apellido) from venta v left join persona p on v.cliente_id= p.id where v.id = v_id_venta;
+
+end$$
+delimiter ;
+
+---------------------------
